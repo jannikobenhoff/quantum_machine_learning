@@ -185,6 +185,7 @@ if __name__ == "__main__":
             for epoch in range(epochs):
                 total_loss = []
                 for batch_idx, (data, target) in enumerate(train_loader[i]):
+
                     if target == torch.tensor([model.number]):
                         target = torch.tensor([1])
                     optimizer.zero_grad()
@@ -223,6 +224,37 @@ if __name__ == "__main__":
             print(test_loader[0])
 
     if test:
+        # Concentrating on the first 100 samples
+        n_samples = 100
+
+        X_train = datasets.MNIST(root='./data', train=True, download=True,
+                                 transform=transforms.Compose([transforms.ToTensor()]))
+
+        # Leaving only labels 0 and 1
+        idx = np.append(np.where(X_train.targets == 0)[0][:n_samples],
+                        np.where(X_train.targets == 1)[0][:n_samples]
+                        )
+        # idx = np.append(idx, np.where(X_train.targets == 2)[0][:n_samples])
+        X_train.data = X_train.data[idx]
+        X_train.targets = X_train.targets[idx]
+
+        train_loader = torch.utils.data.DataLoader(X_train, batch_size=1, shuffle=True);
+        n_samples_show = 6
+
+        data_iter = iter(train_loader)
+        fig, axes = plt.subplots(nrows=1, ncols=n_samples_show, figsize=(10, 3))
+
+        while n_samples_show > 0:
+            images, targets = data_iter.__next__()
+
+            axes[n_samples_show - 1].imshow(images[0].numpy().squeeze(), cmap='gray')
+            axes[n_samples_show - 1].set_xticks([])
+            axes[n_samples_show - 1].set_yticks([])
+            axes[n_samples_show - 1].set_title("Labeled: {}".format(targets.item()))
+
+            n_samples_show -= 1
+        plt.show()
+
         predictions = []
         for i, model in enumerate(models):
             predictions.append([])
@@ -230,6 +262,8 @@ if __name__ == "__main__":
             with torch.no_grad():
                 correct = 0
                 for _, (data, target) in enumerate(test_loader[0]):
+
+
                     output = model(data)
                     predictions[i].append(output)
                     print("Model", i)
