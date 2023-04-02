@@ -270,7 +270,6 @@ def update_input(click, content, filename):
                 if zahlenList != None and zahlenList[0] != None:
                     print("--plotting--")
                     for i, zahl in enumerate(zahlenList):
-                        print("img{}".format(i))
                         img_list.append(html.Img(id={"type": "img", "index": i},
                                                  n_clicks=0, src=Image.fromarray(zahl.imagearray),
                                                  style={"margin-right": "10px", "height": "5%",
