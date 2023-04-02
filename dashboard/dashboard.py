@@ -195,11 +195,11 @@ def ready(click, data):
                 print(prediction)
                 a = np.linspace(-50, 50, 1000)
                 n = np.linspace(-50, 50, 1000)
-                #ev = eval("math.sin(a)")
-                fig = go.Figure(data=[go.Scatter(x=a, y=np.sin(a), line=dict(color=yellow))])
+                ev = eval(str(prediction))
+                fig = go.Figure(data=[go.Scatter(x=a, y=ev, line=dict(color=yellow))])
                 fig.update_layout(template="plotly_dark", plot_bgcolor='rgba(0, 0, 0, 0)', paper_bgcolor='rgba(0, 0, 0, 0)')
 
-                return [html.H2("f(a) = " + "sin(a)", style={"color": "white"}),
+                return [html.H2("f(a) = " + str(prediction), style={"color": "white"}),
                         dcc.Graph(figure=fig, style={"background-color": black})]
 
             elif data == 2:

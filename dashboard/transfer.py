@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torchvision
 from torchvision import transforms
@@ -16,6 +17,8 @@ def predict(img_list):
     predictions = []
     for img in img_list:
         img = img.imagearray
+        img = np.invert(img)
+
         custom_image = torch.from_numpy(img).type(torch.float32) / 255
         custom_image = custom_image.unsqueeze(0)
 
