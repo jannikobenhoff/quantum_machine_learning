@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from multi_model import Net
 from new_try import MyModel, quanv
+import tensorflow as tf
 
 
 def quantum_predict(img_list):
@@ -11,8 +12,8 @@ def quantum_predict(img_list):
     q_imgs = []
     for img in img_list:
         im = img.imagearray/255
-        im = np.reshape(im, (im.shape[0], im.shape[1], 1))
-        q_imgs.append(quanv(im))
+        images = np.array(im[..., tf.newaxis])
+        q_imgs.append(quanv(images))
     q_imgs = np.asarray(q_imgs)
     predictions = np.argmax(model.predict(q_imgs), axis=1)
     print(predictions)

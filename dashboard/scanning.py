@@ -4,6 +4,7 @@ from PIL import Image
 import scipy
 import matplotlib.pyplot as plt
 import cv2
+import tensorflow as tf
 
 from new_try import quanv, MyModel
 
@@ -205,16 +206,20 @@ if __name__ == "__main__":
     zahlen = scan_process("__files/screen2.jpg")
     q_imgs = []
     for img in zahlen:
-        print(img.imagearray)
         im = img.imagearray / 255
-        im = np.reshape(im, (im.shape[0], im.shape[1], 1))
-        q_imgs.append(quanv(im))
+        images = np.array(im[..., tf.newaxis])
+
+        q_imgs.append(quanv(images))
     q_imgs = np.asarray(q_imgs)
 
     n_samples = 4
     n_channels = 4
     fig, axes = plt.subplots(1 + n_channels, n_samples, figsize=(10, 10))
     for k in range(n_samples):
+        axes[0, 0].set_ylabel("Input")
+        if k != 0:
+            axes[0, k].yaxis.set_visible(False)
+        axes[0, k].imshow(zahlen[k].imagearray, cmap="gray")
         for c in range(n_channels):
             axes[c + 1, 0].set_ylabel("Output [ch. {}]".format(c))
             if k != 0:
@@ -235,11 +240,5 @@ if __name__ == "__main__":
     print("Quantum Prediction:")
     model = MyModel()
     model.load_weights('../checkpoints/my_checkpoint')
-    q_imgs = []
-    for img in zahlen:
-        im = img.imagearray/255
-        im = np.reshape(im, (im.shape[0], im.shape[1], 1))
-        q_imgs.append(quanv(im))
-    q_imgs = np.asarray(q_imgs)
     predictions = np.argmax(model.predict(q_imgs), axis=1)
     print(predictions)
