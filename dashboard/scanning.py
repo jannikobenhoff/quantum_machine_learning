@@ -5,6 +5,8 @@ import scipy
 import matplotlib.pyplot as plt
 import cv2
 
+from new_try import quanv, MyModel
+
 
 class Zahl():
     def __init__(self, imagearray):
@@ -200,13 +202,44 @@ def plot_histogram(image1, image2):
 
 
 if __name__ == "__main__":
-    zahlen = scan_process("__files/screen.jpg")
+    zahlen = scan_process("__files/screen2.jpg")
+    q_imgs = []
+    for img in zahlen:
+        print(img.imagearray)
+        im = img.imagearray / 255
+        im = np.reshape(im, (im.shape[0], im.shape[1], 1))
+        q_imgs.append(quanv(im))
+    q_imgs = np.asarray(q_imgs)
 
-    fig, axes = plt.subplots(1, len(zahlen))
+    n_samples = 4
+    n_channels = 4
+    fig, axes = plt.subplots(1 + n_channels, n_samples, figsize=(10, 10))
+    for k in range(n_samples):
+        for c in range(n_channels):
+            axes[c + 1, 0].set_ylabel("Output [ch. {}]".format(c))
+            if k != 0:
+                axes[c, k].yaxis.set_visible(False)
+            axes[c + 1, k].imshow(q_imgs[k, :, :, c], cmap="gray")
 
-    for i in range(len(zahlen)):
-        axes[i].imshow(zahlen[i].imagearray, cmap="gray")
-        axes[i].get_yaxis().set_visible(False)
-        axes[i].get_xaxis().set_visible(False)
+    plt.tight_layout()
     plt.show()
+    # fig, axes = plt.subplots(1, len(zahlen))
+    #
+    # for i in range(len(zahlen)):
+    #     axes[i].imshow(zahlen[i].imagearray, cmap="gray")
+    #     axes[i].get_yaxis().set_visible(False)
+    #     axes[i].get_xaxis().set_visible(False)
+    # plt.show()
     # plt.savefig("real_data_3.pdf")
+
+    print("Quantum Prediction:")
+    model = MyModel()
+    model.load_weights('../checkpoints/my_checkpoint')
+    q_imgs = []
+    for img in zahlen:
+        im = img.imagearray/255
+        im = np.reshape(im, (im.shape[0], im.shape[1], 1))
+        q_imgs.append(quanv(im))
+    q_imgs = np.asarray(q_imgs)
+    predictions = np.argmax(model.predict(q_imgs), axis=1)
+    print(predictions)
