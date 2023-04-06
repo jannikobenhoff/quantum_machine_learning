@@ -165,10 +165,10 @@ app.layout = html.Div(
     State("store", 'data')
 )
 def ready(click, data):
-    client = wolframalpha.Client(key)
-    res = client.query("x + 5 * 4 = x * 9")
-    for i in res.results:
-        print(i.text)
+    # client = wolframalpha.Client(key)
+    # res = client.query("x + 5 * 4 = x * 9")
+    # for i in res.results:
+    #     print(i.text)
     if click is not None and click != 0:
         img_list = []
         zahlenList = scan_process("screen.jpg")
